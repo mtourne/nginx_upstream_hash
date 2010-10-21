@@ -21,3 +21,35 @@ Works the same on 32-bit and 64-bit systems.
 See http://wiki.nginx.org/NginxHttpUpstreamRequestHashModule for more details.
 
 Questions/patches to Evan Miller, emmiller@gmail.com.
+
+
+== Support for nginx_upstream_check_module ==
+
+This version supports nginx_upstream_check module (healthcheck plugin)
+found here : http://github.com/yaoweibin/nginx_upstream_check_module
+
+Usage :
+
+    upstream backend {
+        server 127.0.0.1:8070;
+        server 127.0.0.1:8071;
+        server 127.0.0.1:8072;
+
+        hash "$host";
+        hash_again 20;
+
+        check interval=5000 rise=2 fall=1 timeout=1000 default_down=true type=http;
+        check_http_send "GET / HTTP/1.0\r\n\r\n";
+        check_http_expect_alive http_2xx;
+    }
+
+Algorithm :
+
+- Unless the host in marked DOWN by the upstream check module
+  The hash always picks the same a consistent host
+
+- If the host is marked DOWN the next peer UP in the list is used.
+
+- If a host is marked UP but fails (this can happen if a request comes in before a healthcheck),
+  the upstream_check data is ignored and the default upstream_hash_module
+  hash_again mechanism is used.
