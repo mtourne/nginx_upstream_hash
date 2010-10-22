@@ -297,7 +297,7 @@ ngx_http_upstream_free_hash_peer(ngx_peer_connection_t *pc, void *data,
                 }
             }
         ngx_log_debug2(NGX_LOG_DEBUG_HTTP, pc->log, 0,
-                       "upstream_hash: start peer:%ui chose peer:%ui"
+                       "upstream_hash: start peer:%ui chose peer:%ui",
                        start_index, current);
 #endif
         uhpd->peer_index = current;
